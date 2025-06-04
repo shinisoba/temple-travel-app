@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Moksha</title>
+    <style>
+        @font-face {
+            font-family: 'DMSerifDisplay';
+            src: url('D:/moksha_crew/moksha_A_1/DMSerifDisplay-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: almond #F7F1F2; /* Light background color */
+            color: #333;
+            padding: 0;
+            margin:0;
+            line-height: 1.6;
+        }
+
+        .image-overlay {
+            position: relative; /* Creates a stacking context for children */
+            width: 100vw;      /* Full viewport width */
+            height: 100vh;     /* Full viewport height */
+            background-image: url('D:/moksha_crew/moksha_A_1/background.jpg'); /* Replace with your image path */
+            background-size: cover; /* Cover the entire area */
+            background-position: center; /* Center the image */
+            display: flex;          /* Use flexbox for content centering */
+            justify-content: center; /* Horizontal centering */
+            align-items: center;    /* Vertical centering */
+            margin: 0;              /* Remove any margin */
+        }
+
+        .overlay-text {
+            font-family: 'DMSerifDisplay', serif;
+            color: #F7F1F2;
+            font-size: 3em;  /* Adjust font size as needed */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Add a subtle shadow */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .image-overlay + .form-container {
+            margin-top: 20px; /* Add space after the image overlay */
+        }
+
+        h1,h2 {
+            font-family: 'DMSerifDisplay',serif;
+            color:#0C0A04;
+            margin:0.5em 0;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 1.2em;
+            margin-bottom: 0.3em;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            width: 100%;
+            margin-top: 0.5em;
+            color:#F7F1F2;
+            border: 1px solid #999;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Sora', sans-serif; /* Added body font */
+            background-color: #FFF;
+            color: #333;
+        }
+
+        button {
+            background-color:#adae76 ;/*#a47b67 */ 
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            margin-top: 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif; /* Added body font */
+        }
+
+        button:hover {
+            background-color: #4c4a45;
+        }
+
+        #output {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #F7F1F2;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #999;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-height: none; /* Remove height restriction */
+            hyphens: auto;
+            font-family: 'Sora', sans-serif; /* Added body font */
+            overflow: visible; /* Ensure all text is visible */
+        }
+
+        .spinner {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .navbar {
+            background-color: #9e7551; /* Darker shade for the navbar */
+            color: #F7F1F2; /* Light text color */
+            padding: 1.2em 20px;
+            text-align: center; /* Center the content */
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            position: sticky;
+            margin:0;
+            top: 0;
+            z-index: 100; /* Ensure the navbar stays on top */
+        }
+
+        
+        .navbar h1{
+            display: inline; /* Put h1 and h2 on the same line */
+            margin: 0; 
+            font-size: 1.8em;
+        }
+
+        .form-container {
+            width: 60%;
+            margin: 0 auto; /* Centers the container */
+            padding: 20px;
+            background-color: #9e7551;
+            color: #F7F1F2;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #999;
+            margin: 20px auto;
+        }
+        /* Add spacing between paragraphs and the form container */
+        p {
+            margin-bottom: 10px; /* Adjust as needed */
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div class="navbar">
+        <h1>Moksha</h1>
+    </div>
+    <div class="image-overlay">
+        <h1 class="overlay-text">Welcome to Moksha</h1>
+    </div>
+    
+    <div class="form-container">
+        <form id="tripForm">
+        <label for="city">City:</label>
+        <input type="text" id="city" name="city" required>
+
+        <label for="start_date">Start Date (dd-mm-yyyy):</label>
+        <input type="text" id="start_date" name="start_date" required>
+
+        <label for="end_date">End Date (dd-mm-yyyy):</label>
+        <input type="text" id="end_date" name="end_date" required>
+
+        <label for="no_of_days">Number of Days:</label>
+        <input type="number" id="no_of_days" name="no_of_days" required>
+
+
+        <label for="language">Language:</label>
+        <select id="language" name="language">
+            <option value="English">English</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Malayalam">Malayalam</option>
+            <option value="Tamil">Tamil</option>
+        </select>
+
+        <button type="submit">Generate Trip </button>
+    </form>
+    </div>
+    <div class="spinner" id="loading">Generating your itinerary and temple history... ⏳</div>
+
+    <div id="output"></div>
+
+    <script>
+        const form = document.getElementById('tripForm');
+        const loading = document.getElementById('loading');
+        const output = document.getElementById('output');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loading.style.display = 'block';
+            output.innerHTML = '';
+
+            const formData = {
+                city: form.city.value,
+                start_date: form.start_date.value,
+                end_date: form.end_date.value,
+                no_of_days: form.no_of_days.value,
+                language: form.language.value
+            };
+
+            try {
+                const response = await fetch('http://localhost:8000/generate_trip', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                //const data = await response.json();
+                //if (data.error){
+                    //throw new Error(data.error);
+                //}
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                loading.style.display = 'none';
+
+            output.innerHTML = `
+                <h2>🧭 Itinerary</h2>
+                <pre>${data.itinerary || 'No itinerary generated'}</pre>
+                <div id="historySection" style="margin-top: 2rem">
+                    <h2>📜 Temple Histories</h2>
+                    <div id="historyContent">Generating history... ⏳</div>
+                </div>
+            `;
+
+                // Update history when ready
+                const historyContent = document.getElementById('historyContent');
+                historyContent.innerHTML = `<pre>${data.history || 'No history available'}</pre>`;
+
+            } catch (err) {
+                output.innerHTML = `<p style="color:red">Error: ${err.message}</p>`;
+            } finally {
+                loading.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
