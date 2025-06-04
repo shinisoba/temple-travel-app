@@ -38,12 +38,12 @@ class InputQuery(BaseModel):
     language: str
 
 # ----------- CrewAI Logic -------------
-os.environ['SERPER_API_KEY'] = "743f6c6e2f6a1acff31e75d4a99ade3eca044ac0"
+os.environ['SERPER_API_KEY'] = "insert-api-key"
 
 llm = LLM(
     model="gemini/gemini-1.5-flash",
     temperature=0.7,
-    api_key="AIzaSyBCPwI7IXb3QeYTTEMiGgTF6vTGDBCQApE",
+    api_key="insert-api-key",
     request_timeout=120,
     max_retries=2,
     delay_between_retries=20,
